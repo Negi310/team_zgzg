@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: map_ground_0
+  m_Name: "\u30B9\u30AF\u30EA\u30FC\u30F3\u30B7\u30E7\u30C3\u30C8 2024-11-28 172122_0"
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 2003209902550275850, guid: 5db31bae13c6b214285b52937fd23187, type: 3}
+  m_Sprite: {fileID: -6403542092602886804, guid: eab2b4d1fb6bed14883b7cefb8bf809d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
