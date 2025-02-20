@@ -560,7 +560,7 @@ GameObject:
   - component: {fileID: 930405477}
   - component: {fileID: 930405478}
   m_Layer: 0
-  m_Name: Square (1)
+  m_Name: DropPiece
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -630,7 +630,7 @@ Transform:
   m_GameObject: {fileID: 930405473}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.79, y: 1.11, z: 0}
+  m_LocalPosition: {x: 8.55, y: 1.04, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -690,6 +690,7 @@ MonoBehaviour:
   validDownArrow: 0
   validRightArrow: 0
   validLeftArrow: 0
+  playerMovement: {fileID: 0}
 --- !u!1 &983379668
 GameObject:
   m_ObjectHideFlags: 0
@@ -813,10 +814,7 @@ MonoBehaviour:
   moveSpeed: 5
   nomalSpeed: 5
   accelSpeed: 10
-  accelRatio: 2
-  vtcSpeed: 0
-  jumpFlag: 0
-  jumpingFlag: 0
+  accelRatio: 6
   groundFlag: 0
   rightLength: 0.1
   leftLength: 0.1
@@ -830,14 +828,16 @@ MonoBehaviour:
   rightRatio: 0.5
   leftRatio: 0.5
   ceilRatio: 0.5
-  strongAccel: 400
-  weakAccel: 20
+  weakAccel: 15
   gravity: -30
   topSpeed: 5
   minAccel: 50
   strongAccelRatio: 30
   initialSpeed: 25
   initialStrAcl: 400
+  moveDirR: {x: 0, y: 0}
+  dirAngle: 0
+  attachFlag: 0
 --- !u!61 &1073119300
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -975,7 +975,7 @@ Transform:
   m_GameObject: {fileID: 1073119298}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.492, y: 2.505, z: 0}
+  m_LocalPosition: {x: -4.62, y: 0.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1315,13 +1315,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1846181048}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.44124627, w: 0.89738613}
-  m_LocalPosition: {x: 11.55, y: 0.66, z: 0}
-  m_LocalScale: {x: 6.2490134, y: 2.9123292, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.9991, y: 1.6378, z: 0}
+  m_LocalScale: {x: 1.5795678, y: 4.240913, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 52.367}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

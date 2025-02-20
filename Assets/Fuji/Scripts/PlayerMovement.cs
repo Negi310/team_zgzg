@@ -12,9 +12,9 @@ public class PlayerMovement : MonoBehaviour
     public float nomalSpeed = 5f;
     public float accelSpeed = 10f;
     public float accelRatio = 2f;
-    public float vtcSpeed = 0f;
-    public bool jumpFlag = false;
-    public bool jumpingFlag = false;
+    private float vtcSpeed = 0f;
+    private bool jumpFlag = false;
+    private bool jumpingFlag = false;
     public bool groundFlag = false;
     public float rightLength = 0.1f;
     public float leftLength = 0.1f;
@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour
     public float rightRatio = 0.5f;
     public float leftRatio = 0.5f;
     public float ceilRatio = 0.5f;
-    public float strongAccel = 400f; 
+    private float strongAccel = 400f; 
     public float weakAccel = 10f; 
     public float gravity = -15f;
     public float topSpeed = 5f;
@@ -34,7 +34,8 @@ public class PlayerMovement : MonoBehaviour
     public float strongAccelRatio = 30f;
     public float initialSpeed = 25f;
     public float initialStrAcl = 400f;
-    private Vector2 moveDirR;
+    public Vector2 moveDirR;
+    public float dirAngle;
     private bool attachUp = true;
     private bool attachDown = true;
     private bool attachRight = true;
@@ -53,9 +54,10 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        RayCheck();
+        AngleCheck();
         Move();
         jumpFlag = Input.GetKey(KeyCode.Space);
-        RayCheck();
         if(ceilFlag || !jumpingFlag)
         {
             transform.position += transform.up * vtcSpeed * Time.deltaTime * 0.5f;
@@ -94,11 +96,11 @@ public class PlayerMovement : MonoBehaviour
         if(collision.gameObject.CompareTag("Ground"))
         {
             vtcSpeed = 0f;
-            groundFlag = true;
             var normal = collision.contacts[0].normal;
             Vector2 dir = normal.normalized;
             moveDirR = Quaternion.Euler(0f,0f,-90f) * new Vector3(dir.x, dir.y, 0f);
             moveDirR = new Vector3(moveDirR.x, moveDirR.y, 0f);
+            dirAngle = Mathf.Atan2(moveDirR.y, moveDirR.x) * Mathf.Rad2Deg;
         }
     }
     void OnCollisionExit2D(Collision2D collision)
@@ -106,6 +108,8 @@ public class PlayerMovement : MonoBehaviour
         if(collision.gameObject.CompareTag("Ground"))
         {
             moveDirR = transform.right;
+            rightFlag = true;
+            leftFlag = true;
             groundFlag = false;
         }
     }
@@ -136,12 +140,43 @@ public class PlayerMovement : MonoBehaviour
             moveSpeed = accelSpeed;
         }
     }
+    void AngleCheck()
+    {
+        if(60f < dirAngle && dirAngle <= 90f)
+        {
+            moveDirR = new Vector3(1f, 0f, 0f);
+            if(!jumpingFlag)
+            {
+                rightFlag = false;
+            }
+        }
+        else if(90f < dirAngle)
+        {
+            moveDirR = new Vector3(1f, 0f, 0f);
+            groundFlag = false;
+        }
+        else if(-90f <= dirAngle && dirAngle < -60f)
+        {
+            moveDirR = new Vector3(1f, 0f, 0f);
+            if(!jumpingFlag)
+            {
+                leftFlag = false;
+            }
+        }
+        else if(dirAngle < -90f)
+        {
+            moveDirR = new Vector3(1f, 0f, 0f);
+            groundFlag = false;
+        }
+    }
     void RayCheck()
     {
         Vector2 position = transform.position;
+        Vector2 v = new Vector2(-0.499f, 0.65f);
         RaycastHit2D hitRight = Physics2D.Raycast(position + Vector2.right * rightRatio, Vector2.right, rightLength, groundLayer);
         RaycastHit2D hitLeft = Physics2D.Raycast(position + Vector2.left * leftRatio, Vector2.left, leftLength, groundLayer);
-        RaycastHit2D hitCeil = Physics2D.Raycast(position + Vector2.up * ceilRatio, Vector2.up, ceilLength, groundLayer);
+        RaycastHit2D hitCeil = Physics2D.Raycast(position + v, Vector2.right, 0.998f, groundLayer);
+        Debug.DrawRay(position + v, Vector2.right * 0.998f, Color.red, 1f, false);
         rightFlag = (hitRight.collider == null);
         leftFlag = (hitLeft.collider == null);
         ceilFlag = (hitCeil.collider == null);
@@ -149,6 +184,10 @@ public class PlayerMovement : MonoBehaviour
     void StartJump()
     {
         jumpingFlag = true;
+        rightFlag = true;
+        leftFlag = true;
+        moveDirR = new Vector3(1f, 0f, 0f);
+        dirAngle = Mathf.Atan2(0f, 1f) * Mathf.Rad2Deg;
         vtcSpeed = initialSpeed;
     }
     void Jump()
