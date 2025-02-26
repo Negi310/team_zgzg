@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      fabric_126_albedo-2K_0: 5132683913474171188
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
