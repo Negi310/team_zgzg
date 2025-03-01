@@ -13,9 +13,9 @@ public class ScoreItem : MonoBehaviour
 　　　　　　//プレイヤーが判定内に入ったら
         if(playerCheck.isOn)
         {
-            if(GManagerTest.instance != null)
+            if(GManager.instance != null)
             {
-            GManagerTest.instance.score += myScore;
+            GManager.instance.score += myScore;
             Destroy(this.gameObject);
             }
         }
