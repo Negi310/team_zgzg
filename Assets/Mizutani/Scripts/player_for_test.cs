@@ -40,4 +40,6 @@ public class player_for_test : MonoBehaviour
          }
          rb.linearVelocity = new Vector2(xSpeed, rb.linearVelocity.y);
     }
+
+    
 }
