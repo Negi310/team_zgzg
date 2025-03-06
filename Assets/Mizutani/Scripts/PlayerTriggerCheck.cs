@@ -12,17 +12,17 @@ public class PlayerTriggerCheck : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
    {
        if (collision.tag == playerTag)
-       {
-          isOn = true;
-       }
-    }
+      {
+         isOn = true;
+      }
+   }
 
     private void OnTriggerExit2D(Collider2D collision)
-    {
+   {
         if (collision.tag == playerTag)
         {
-           isOn = false;
+            isOn = false;
         }
-    }
-    #endregion
+   }
+   #endregion
 }
