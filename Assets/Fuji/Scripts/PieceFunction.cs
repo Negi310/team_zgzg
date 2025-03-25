@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PieceFunction : MonoBehaviour
 {
-    public string pieceName;
+    public int pieceId;
     public bool canAttach;
     public bool validUpArrow;
     public bool validDownArrow;
@@ -21,26 +21,22 @@ public class PieceFunction : MonoBehaviour
             if(validUpArrow && Input.GetKeyDown(KeyCode.UpArrow))
             {
                 Vector2 validDir = Vector2.up;
-                playerMovement.AddPiece(validDir, new PieceData(pieceName, canAttach));
-                Destroy(gameObject);
+                playerMovement.AddPiece(validDir, new PieceData(pieceId, canAttach));
             }
             else if(validDownArrow && Input.GetKeyDown(KeyCode.DownArrow))
             {
                 Vector2 validDir = Vector2.down;
-                playerMovement.AddPiece(validDir, new PieceData(pieceName, canAttach));
-                Destroy(gameObject);
+                playerMovement.AddPiece(validDir, new PieceData(pieceId, canAttach));
             }
             else if(validRightArrow && Input.GetKeyDown(KeyCode.RightArrow))
             {
                 Vector2 validDir = Vector2.right;
-                playerMovement.AddPiece(validDir, new PieceData(pieceName, canAttach));
-                Destroy(gameObject);
+                playerMovement.AddPiece(validDir, new PieceData(pieceId, canAttach));
             }
             else if(validLeftArrow && Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 Vector2 validDir = Vector2.left;
-                playerMovement.AddPiece(validDir, new PieceData(pieceName, canAttach));
-                Destroy(gameObject);
+                playerMovement.AddPiece(validDir, new PieceData(pieceId, canAttach));
             }
         }
     }
