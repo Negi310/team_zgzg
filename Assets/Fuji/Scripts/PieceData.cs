@@ -2,11 +2,11 @@ using UnityEngine;
 
 public struct PieceData
 {
-    public string name;
+    public int id;
     public bool canAttach;
-    public PieceData(string name, bool canAttach)
+    public PieceData(int id, bool canAttach)
     {
-        this.name = name;
+        this.id = id;
         this.canAttach = canAttach;
     }
 }

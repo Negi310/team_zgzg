@@ -13,8 +13,8 @@ public class PlayerMovement : MonoBehaviour
     public float accelSpeed = 10f;
     public float accelRatio = 2f;
     private float vtcSpeed = 0f;
-    private bool jumpFlag = false;
-    private bool jumpingFlag = false;
+    public bool jumpFlag = false;
+    public bool jumpingFlag = false;
     public bool groundFlag = false;
     public float rightLength = 0.1f;
     public float leftLength = 0.1f;
@@ -44,6 +44,10 @@ public class PlayerMovement : MonoBehaviour
     private List<PieceData> downPieces = new List<PieceData>();
     private List<PieceData> rightPieces = new List<PieceData>();
     private List<PieceData> leftPieces = new List<PieceData>();
+    private List<GameObject> upPieceObjects;
+    private List<GameObject> downPieceObjects;
+    private List<GameObject> rightPieceObjects;
+    private List<GameObject> leftPieceObjects;
     public bool attachFlag = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -55,7 +59,6 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         RayCheck();
-        AngleCheck();
         Move();
         jumpFlag = Input.GetKey(KeyCode.Space);
         if(ceilFlag || !jumpingFlag)
@@ -88,7 +91,11 @@ public class PlayerMovement : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Ground"))
         {
-            groundFlag = true;
+            var normal = collision.contacts[0].normal;
+            Vector2 dir = normal.normalized;
+            moveDirR = Quaternion.Euler(0f,0f,-90f) * new Vector3(dir.x, dir.y, 0f);
+            moveDirR = new Vector3(moveDirR.x, moveDirR.y, 0f);
+            dirAngle = Mathf.Atan2(moveDirR.y, moveDirR.x) * Mathf.Rad2Deg;
         }
     }
     void OnCollisionStay2D(Collision2D collision)
@@ -96,11 +103,7 @@ public class PlayerMovement : MonoBehaviour
         if(collision.gameObject.CompareTag("Ground"))
         {
             vtcSpeed = 0f;
-            var normal = collision.contacts[0].normal;
-            Vector2 dir = normal.normalized;
-            moveDirR = Quaternion.Euler(0f,0f,-90f) * new Vector3(dir.x, dir.y, 0f);
-            moveDirR = new Vector3(moveDirR.x, moveDirR.y, 0f);
-            dirAngle = Mathf.Atan2(moveDirR.y, moveDirR.x) * Mathf.Rad2Deg;
+            AngleCheck();
         }
     }
     void OnCollisionExit2D(Collision2D collision)
@@ -148,12 +151,12 @@ public class PlayerMovement : MonoBehaviour
             if(!jumpingFlag)
             {
                 rightFlag = false;
+                groundFlag = true;
             }
         }
         else if(90f < dirAngle)
         {
             moveDirR = new Vector3(1f, 0f, 0f);
-            groundFlag = false;
         }
         else if(-90f <= dirAngle && dirAngle < -60f)
         {
@@ -161,12 +164,16 @@ public class PlayerMovement : MonoBehaviour
             if(!jumpingFlag)
             {
                 leftFlag = false;
+                groundFlag = true;
             }
         }
         else if(dirAngle < -90f)
         {
             moveDirR = new Vector3(1f, 0f, 0f);
-            groundFlag = false;
+        }
+        else
+        {
+            groundFlag = true;
         }
     }
     void RayCheck()
@@ -261,6 +268,45 @@ public class PlayerMovement : MonoBehaviour
         if(targetList != null && targetList.Count > 0)
         {
             PieceData detachedPiece = targetList[targetList.Count - 1];
+        }
+    }
+    int FindPieceStatus(List<PieceData> pieceList, int targetId)
+    {
+        if (pieceList.Count == 0)
+        {   
+            return 0;
+        }
+        for (int i = 0; i < pieceList.Count; i++)
+        {
+            if (pieceList[i].id == targetId)
+            {
+                if (i == pieceList.Count - 1)
+                {
+                    return 2;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+
+    public void UpdatePieceVisibility(List<PieceData> pieceList, List<GameObject> objList)
+    {
+        // すべてのピースオブジェクトを非表示にする
+        foreach (GameObject obj in objList)
+        {
+            obj.SetActive(false);
+        }
+
+        // 最大3つまで表示する
+        int maxDisplay = Mathf.Min(3, pieceList.Count);
+
+        for (int i = 0; i < maxDisplay; i++)
+        {
+            objList[pieceList[i].id].SetActive(true);
         }
     }
 }
