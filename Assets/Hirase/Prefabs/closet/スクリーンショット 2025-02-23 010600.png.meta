@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 90884205196d72449a167a60547dc070
+guid: eb6aac7ea6b45554aa853d1e00465b3b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5132683913474171188
-    second: fabric_126_albedo-2K_0
+      213: -4749897905597755206
+    second: "\u30B9\u30AF\u30EA\u30FC\u30F3\u30B7\u30E7\u30C3\u30C8 2025-02-23 010600_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: fabric_126_albedo-2K_0
+      name: "\u30B9\u30AF\u30EA\u30FC\u30F3\u30B7\u30E7\u30C3\u30C8 2025-02-23 010600_0"
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 2048
-        height: 2048
+        width: 554
+        height: 494
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4316dfe33d4fa3740800000000000000
-      internalID: 5132683913474171188
+      spriteID: ab059795509f41eb0800000000000000
+      internalID: -4749897905597755206
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      fabric_126_albedo-2K_0: 5132683913474171188
+      "\u30B9\u30AF\u30EA\u30FC\u30F3\u30B7\u30E7\u30C3\u30C8 2025-02-23 010600_0": -4749897905597755206
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

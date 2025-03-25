@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 90884205196d72449a167a60547dc070
+guid: 1c1797c0e7101164e87bbd0e991ffc4f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5132683913474171188
-    second: fabric_126_albedo-2K_0
+      213: -6814863474020492428
+    second: heart_test_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: fabric_126_albedo-2K_0
+      name: heart_test_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 2048
-        height: 2048
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4316dfe33d4fa3740800000000000000
-      internalID: 5132683913474171188
+      spriteID: 47b593ee6cdbc61a0800000000000000
+      internalID: -6814863474020492428
       vertices: []
       indices: 
       edges: []
@@ -147,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      fabric_126_albedo-2K_0: 5132683913474171188
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
