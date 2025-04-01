@@ -7,55 +7,47 @@ using TMPro;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public Rigidbody2D rb;
-    public float moveSpeed = 5f;
-    public float nomalSpeed = 5f;
-    public float accelSpeed = 10f;
-    public float accelRatio = 2f;
-    private float vtcSpeed = 0f;
-    public bool jumpFlag = false;
-    public bool jumpingFlag = false;
-    public bool groundFlag = false;
-    public float rightLength = 0.1f;
-    public float leftLength = 0.1f;
-    public float ceilLength = 0.1f;
-    public LayerMask groundLayer;
-    public bool rightFlag = true;
-    public bool leftFlag = true;
-    public bool ceilFlag = true;
-    public float rightRatio = 0.5f;
-    public float leftRatio = 0.5f;
-    public float ceilRatio = 0.5f;
-    private float strongAccel = 400f; 
-    public float weakAccel = 10f; 
-    public float gravity = -15f;
-    public float topSpeed = 5f;
-    public float minAccel = 50f;
-    public float strongAccelRatio = 30f;
-    public float initialSpeed = 25f;
-    public float initialStrAcl = 400f;
-    public Vector2 moveDirR;
-    public float dirAngle;
-    private bool attachUp = true;
-    private bool attachDown = true;
-    private bool attachRight = true;
-    private bool attachLeft = true;
-    private List<PieceData> upPieces = new List<PieceData>();
-    private List<PieceData> downPieces = new List<PieceData>();
-    private List<PieceData> rightPieces = new List<PieceData>();
-    private List<PieceData> leftPieces = new List<PieceData>();
+    public bool attachFlag = false;
+    [Header("横歩行速度"),SerializeField]private float nomalSpeed = 5f;
+    [Header("横最高速度"),SerializeField]private float accelSpeed = 10f;
+    [Header("横加速割合"),SerializeField]private float accelRatio = 2f;
+    [Header("タテ初速度"),SerializeField]private float initialSpeed = 25f;
+    [Header("タテ第一減速度（ジャンプの最初のギュンってやつ）（長押しにより減少）"),SerializeField]private float strongAccel = 400f; 
+    [Header("タテ最高第一減速度"),SerializeField]private float initialStrAcl = 400f;
+    [Header("タテ最低第一減速度"),SerializeField]private float minAccel = 50f;
+    [Header("第一減速度減少割合"),SerializeField]private float strongAccelRatio = 30f;
+    [Header("減速度移行速度"),SerializeField]private float topSpeed = 5f;
+    [Header("タテ第二減速度（ジェットコースターのエアタイム的な期間の減速度）"),SerializeField]private float weakAccel = 10f; 
+    [Header("重力"),SerializeField]private float gravity = -15f;
+    [Header("接地判定"),SerializeField]private bool groundFlag = false;
+    [Header("右壁ないか判定"),SerializeField]private bool rightFlag = true;
+    [Header("左壁ないか判定"),SerializeField]private bool leftFlag = true;
+    [Header("天井ないか判定"),SerializeField]private bool ceilFlag = true;
+    [Header("右進行方向"),SerializeField]private Vector2 moveDirR;
+    [Header("下からぶつかると天井と認識されるもの"),SerializeField]private LayerMask groundLayer;
+    private Rigidbody2D rb;
+    private float moveSpeed = 5f; //プレイヤーの横移動速度
+    private float vtcSpeed = 0f; //プレイヤーの縦移動速度
+    private float dirAngle; //接している床の角度
+    private bool jumpFlag = false; //ジャンプ入力検知
+    private bool jumpingFlag = false; //ジャンプ中検知
+    private bool attachUp = true; //ピース上付けられる
+    private bool attachDown = true; //ピース下付けられる
+    private bool attachRight = true; //ピース右付けられる
+    private bool attachLeft = true; //ピース左付けられる
+    private List<PieceData> upPieces = new List<PieceData>(); //上側についてるピース
+    private List<PieceData> downPieces = new List<PieceData>(); //下側についてるピース
+    private List<PieceData> rightPieces = new List<PieceData>(); //右側についてるピース
+    private List<PieceData> leftPieces = new List<PieceData>(); //左側についてるピース
     private List<GameObject> upPieceObjects;
     private List<GameObject> downPieceObjects;
     private List<GameObject> rightPieceObjects;
     private List<GameObject> leftPieceObjects;
-    public bool attachFlag = false;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    // Update is called once per frame
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
-
-    // Update is called once per frame
     void Update()
     {
         RayCheck();
@@ -86,21 +78,18 @@ public class PlayerMovement : MonoBehaviour
             strongAccel = initialStrAcl;
             Fall();
         }
+        rb.linearVelocity =  new Vector2(0f, 0f);
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.CompareTag("Ground"))
+        if(collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("FallFloor"))
         {
-            var normal = collision.contacts[0].normal;
-            Vector2 dir = normal.normalized;
-            moveDirR = Quaternion.Euler(0f,0f,-90f) * new Vector3(dir.x, dir.y, 0f);
-            moveDirR = new Vector3(moveDirR.x, moveDirR.y, 0f);
-            dirAngle = Mathf.Atan2(moveDirR.y, moveDirR.x) * Mathf.Rad2Deg;
+            DirCheck(collision);
         }
     }
     void OnCollisionStay2D(Collision2D collision)
     {
-        if(collision.gameObject.CompareTag("Ground"))
+        if(collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("FallFloor"))
         {
             vtcSpeed = 0f;
             AngleCheck();
@@ -108,7 +97,7 @@ public class PlayerMovement : MonoBehaviour
     }
     void OnCollisionExit2D(Collision2D collision)
     {
-        if(collision.gameObject.CompareTag("Ground"))
+        if(collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("FallFloor"))
         {
             moveDirR = transform.right;
             rightFlag = true;
@@ -116,7 +105,7 @@ public class PlayerMovement : MonoBehaviour
             groundFlag = false;
         }
     }
-    void Move()
+    void Move() //横移動（ダッシュ可能）
     {
         if(Input.GetKey(KeyCode.A) && leftFlag)
         {
@@ -143,9 +132,17 @@ public class PlayerMovement : MonoBehaviour
             moveSpeed = accelSpeed;
         }
     }
-    void AngleCheck()
+    void DirCheck(Collision2D collision) //接している地面の角度算出
     {
-        if(60f < dirAngle && dirAngle <= 90f)
+        var normal = collision.contacts[0].normal;
+        Vector2 dir = normal.normalized;
+        moveDirR = Quaternion.Euler(0f,0f,-90f) * new Vector3(dir.x, dir.y, 0f);
+        moveDirR = new Vector3(moveDirR.x, moveDirR.y, 0f);
+        dirAngle = Mathf.Atan2(moveDirR.y, moveDirR.x) * Mathf.Rad2Deg;
+    }
+    void AngleCheck() //地面の角度による振る舞い分け
+    {
+        if(60f < dirAngle && dirAngle < 90f)
         {
             moveDirR = new Vector3(1f, 0f, 0f);
             if(!jumpingFlag)
@@ -158,7 +155,7 @@ public class PlayerMovement : MonoBehaviour
         {
             moveDirR = new Vector3(1f, 0f, 0f);
         }
-        else if(-90f <= dirAngle && dirAngle < -60f)
+        else if(-90f < dirAngle && dirAngle < -60f)
         {
             moveDirR = new Vector3(1f, 0f, 0f);
             if(!jumpingFlag)
@@ -176,19 +173,14 @@ public class PlayerMovement : MonoBehaviour
             groundFlag = true;
         }
     }
-    void RayCheck()
+    void RayCheck() //天井検知
     {
         Vector2 position = transform.position;
         Vector2 v = new Vector2(-0.499f, 0.65f);
-        RaycastHit2D hitRight = Physics2D.Raycast(position + Vector2.right * rightRatio, Vector2.right, rightLength, groundLayer);
-        RaycastHit2D hitLeft = Physics2D.Raycast(position + Vector2.left * leftRatio, Vector2.left, leftLength, groundLayer);
         RaycastHit2D hitCeil = Physics2D.Raycast(position + v, Vector2.right, 0.998f, groundLayer);
-        Debug.DrawRay(position + v, Vector2.right * 0.998f, Color.red, 1f, false);
-        rightFlag = (hitRight.collider == null);
-        leftFlag = (hitLeft.collider == null);
         ceilFlag = (hitCeil.collider == null);
     }
-    void StartJump()
+    void StartJump() //ジャンプ開始時の初期化処理
     {
         jumpingFlag = true;
         rightFlag = true;
@@ -197,7 +189,7 @@ public class PlayerMovement : MonoBehaviour
         dirAngle = Mathf.Atan2(0f, 1f) * Mathf.Rad2Deg;
         vtcSpeed = initialSpeed;
     }
-    void Jump()
+    void Jump() //最初ギュンってなってフワッてなって落ちるやつ
     {
         if(vtcSpeed > topSpeed)
         {
@@ -212,16 +204,16 @@ public class PlayerMovement : MonoBehaviour
             jumpingFlag = false;
         }
     }
-    void PushJump()
+    void PushJump() //長押ししてる間に次第にギュン弱体化
     {
         strongAccel -= strongAccelRatio * Mathf.Pow(2,Time.deltaTime);
         strongAccel = Mathf.Max(strongAccel,minAccel);
     }
-    void Fall()
+    void Fall() //落下
     {
         vtcSpeed += gravity * Time.deltaTime;
     }
-    public void AddPiece(Vector2 direction, PieceData piece)
+    public void AddPiece(Vector2 direction, PieceData piece) //ピースの近くにいるときでのピースの情報受理
     {
         if(direction == Vector2.up && attachUp)
         {
@@ -263,7 +255,7 @@ public class PlayerMovement : MonoBehaviour
             DetachPiece(leftPieces);
         }
     }
-    void DetachPiece(List<PieceData> targetList)
+    void DetachPiece(List<PieceData> targetList) //ピース外す
     {
         if(targetList != null && targetList.Count > 0)
         {
@@ -292,7 +284,6 @@ public class PlayerMovement : MonoBehaviour
         }
         return 0;
     }
-
     public void UpdatePieceVisibility(List<PieceData> pieceList, List<GameObject> objList)
     {
         // すべてのピースオブジェクトを非表示にする
