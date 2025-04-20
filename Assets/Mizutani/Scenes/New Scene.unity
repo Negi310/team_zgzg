@@ -3694,7 +3694,7 @@ MonoBehaviour:
   score: 0
   stageNum: 1
   continueNum: 0
-  heartNum: 2
+  heartNum: 3
 --- !u!4 &2098715154
 Transform:
   m_ObjectHideFlags: 0
