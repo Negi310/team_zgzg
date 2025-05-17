@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ground
   - FallFloor
+  - Thorn
   layers:
   - Default
   - TransparentFX
