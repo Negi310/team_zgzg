@@ -7,7 +7,6 @@ using TMPro;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public bool attachFlag = false;
     [Header("横歩行速度"),SerializeField]private float nomalSpeed = 5f;
     [Header("横最高速度"),SerializeField]private float accelSpeed = 10f;
     [Header("横加速割合"),SerializeField]private float accelRatio = 2f;
@@ -31,18 +30,6 @@ public class PlayerMovement : MonoBehaviour
     private float dirAngle; //接している床の角度
     private bool jumpFlag = false; //ジャンプ入力検知
     private bool jumpingFlag = false; //ジャンプ中検知
-    private bool attachUp = true; //ピース上付けられる
-    private bool attachDown = true; //ピース下付けられる
-    private bool attachRight = true; //ピース右付けられる
-    private bool attachLeft = true; //ピース左付けられる
-    private List<PieceData> upPieces = new List<PieceData>(); //上側についてるピース
-    private List<PieceData> downPieces = new List<PieceData>(); //下側についてるピース
-    private List<PieceData> rightPieces = new List<PieceData>(); //右側についてるピース
-    private List<PieceData> leftPieces = new List<PieceData>(); //左側についてるピース
-    private List<GameObject> upPieceObjects;
-    private List<GameObject> downPieceObjects;
-    private List<GameObject> rightPieceObjects;
-    private List<GameObject> leftPieceObjects;
     // Update is called once per frame
     void Start()
     {
@@ -109,7 +96,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if(Input.GetKey(KeyCode.A) && leftFlag)
         {
-            if(Input.GetKey(KeyCode.LeftShift))
+            if(Input.GetKey(KeyCode.LeftShift) && !jumpingFlag)
             {
                 moveSpeed += accelRatio * Time.deltaTime;
             }
@@ -121,7 +108,7 @@ public class PlayerMovement : MonoBehaviour
         }
         if(Input.GetKey(KeyCode.D) && rightFlag)
         {
-            if(Input.GetKey(KeyCode.LeftShift))
+            if(Input.GetKey(KeyCode.LeftShift) && !jumpingFlag)
             {
                 moveSpeed += accelRatio * Time.deltaTime;
             }
@@ -142,7 +129,7 @@ public class PlayerMovement : MonoBehaviour
     }
     void AngleCheck() //地面の角度による振る舞い分け
     {
-        if(60f < dirAngle && dirAngle < 90f)
+        if(60f < dirAngle && dirAngle <= 90f)
         {
             moveDirR = new Vector3(1f, 0f, 0f);
             if(!jumpingFlag)
@@ -155,7 +142,7 @@ public class PlayerMovement : MonoBehaviour
         {
             moveDirR = new Vector3(1f, 0f, 0f);
         }
-        else if(-90f < dirAngle && dirAngle < -60f)
+        else if(-90f <= dirAngle && dirAngle < -60f)
         {
             moveDirR = new Vector3(1f, 0f, 0f);
             if(!jumpingFlag)
@@ -212,92 +199,5 @@ public class PlayerMovement : MonoBehaviour
     void Fall() //落下
     {
         vtcSpeed += gravity * Time.deltaTime;
-    }
-    public void AddPiece(Vector2 direction, PieceData piece) //ピースの近くにいるときでのピースの情報受理
-    {
-        if(direction == Vector2.up && attachUp)
-        {
-            upPieces.Add(piece);
-            attachUp = piece.canAttach;
-        }
-        else if(direction == Vector2.down && attachDown)
-        {
-            downPieces.Add(piece);
-            attachDown = piece.canAttach;
-        }
-        else if(direction == Vector2.right && attachRight)
-        {
-            rightPieces.Add(piece);
-            attachRight = piece.canAttach;
-        }
-        else if(direction == Vector2.left && attachLeft)
-        {
-            leftPieces.Add(piece);
-            attachLeft = piece.canAttach;
-        }
-    }
-    void InputArrow()
-    {
-        if(Input.GetKeyDown(KeyCode.UpArrow) && !attachFlag)
-        {
-            DetachPiece(upPieces);
-        }
-        else if(Input.GetKeyDown(KeyCode.DownArrow) && !attachFlag)
-        {
-            DetachPiece(downPieces);
-        }
-        else if(Input.GetKeyDown(KeyCode.RightArrow) && !attachFlag)
-        {
-            DetachPiece(rightPieces);
-        }
-        else if(Input.GetKeyDown(KeyCode.LeftArrow) && !attachFlag)
-        {
-            DetachPiece(leftPieces);
-        }
-    }
-    void DetachPiece(List<PieceData> targetList) //ピース外す
-    {
-        if(targetList != null && targetList.Count > 0)
-        {
-            PieceData detachedPiece = targetList[targetList.Count - 1];
-        }
-    }
-    int FindPieceStatus(List<PieceData> pieceList, int targetId)
-    {
-        if (pieceList.Count == 0)
-        {   
-            return 0;
-        }
-        for (int i = 0; i < pieceList.Count; i++)
-        {
-            if (pieceList[i].id == targetId)
-            {
-                if (i == pieceList.Count - 1)
-                {
-                    return 2;
-                }
-                else
-                {
-                    return 1;
-                }
-            }
-        }
-        return 0;
-    }
-    public void UpdatePieceVisibility(List<PieceData> pieceList, List<GameObject> objList)
-    {
-        // すべてのピースオブジェクトを非表示にする
-        foreach (GameObject obj in objList)
-        {
-            obj.SetActive(false);
-        }
-
-        // 最大3つまで表示する
-        int maxDisplay = Mathf.Min(3, pieceList.Count);
-
-        for (int i = 0; i < maxDisplay; i++)
-        {
-            objList[pieceList[i].id].SetActive(true);
-        }
     }
 }
