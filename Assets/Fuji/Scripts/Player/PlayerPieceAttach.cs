@@ -19,6 +19,13 @@ public class PlayerPieceAttach : MonoBehaviour
         { PieceDirection.Left, new() },
         { PieceDirection.Right, new() },
     };
+    private Dictionary<PieceDirection, List<GameObject>> pieceObjs = new() //装着ピース
+    {
+        { PieceDirection.Up, new() },
+        { PieceDirection.Down, new() },
+        { PieceDirection.Left, new() },
+        { PieceDirection.Right, new() },
+    };
     private List<PieceFunction> nearbyPieces = new(); // 接触中のピース
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Update()
@@ -54,12 +61,10 @@ public class PlayerPieceAttach : MonoBehaviour
     }
     private void DetachPiece(PieceDirection inputDir) //ピース外す
     {
-        if (attachedPieces.TryGetValue(inputDir, out var targetList) && targetList.Count > 0)
-        {
-            PieceData detachedPiece = targetList[targetList.Count - 1];
-            targetList.RemoveAt(targetList.Count - 1);
-            attachable[inputDir] = true;
-        }
+        if (!attachedPieces.TryGetValue(inputDir, out var targetList) || targetList.Count <= 0) return;
+        PieceData detachedPiece = targetList[targetList.Count - 1];
+        targetList.RemoveAt(targetList.Count - 1);
+        attachable[inputDir] = true;
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -102,17 +107,18 @@ public class PlayerPieceAttach : MonoBehaviour
         }
         return 0;
     }
-    public void UpdatePieceVisibility(List<PieceData> pieceList, List<GameObject> objList)
+    private void UpdatePieceVisibility(PieceDirection direction)
     {
-        // すべてのピースオブジェクトを非表示にする
-        foreach (GameObject obj in objList)
+        if (!pieceObjs.TryGetValue(direction, out var objList) || !attachedPieces.TryGetValue(direction, out var pieceList)) return;
+
+        // 全オブジェクトを非表示に
+        foreach (var obj in objList)
         {
             obj.SetActive(false);
         }
 
-        // 最大3つまで表示する
+        // 最大3つまで表示、対応 id 番号のオブジェクトを有効に
         int maxDisplay = Mathf.Min(3, pieceList.Count);
-
         for (int i = 0; i < maxDisplay; i++)
         {
             objList[pieceList[i].id].SetActive(true);
