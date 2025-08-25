@@ -7,11 +7,11 @@ public class player_for_test : MonoBehaviour
    //インスペクターで設定する
    public float speed;
    public GroundCheck ground;
-   public Transform respawnPoint;
    public GManager gManager;
 
    private Rigidbody2D rb = null;
    private bool isGround = false;
+   private Vector3 respawnPoint;
 
    //private string thornTag = "Thorn";
 
@@ -58,12 +58,17 @@ public class player_for_test : MonoBehaviour
    #endregion
    */
 
-   private void OnTriggerEnter2D(Collider2D collision)//トゲとぶつかったら
+   private void OnTriggerEnter2D(Collider2D collision)
    {
-      if (collision.CompareTag("Thorn"))
+      if (collision.CompareTag("Thorn"))//トゲとぶつかったら
       {
          TakeDamage(1);
          Respawn();
+      }
+
+      if (collision.CompareTag("CheckPoint"))//"CheckPoint"タグのオブジェクトに触れたら
+      {
+         respawnPoint = collision.transform.position;
       }
    }
 
@@ -76,11 +81,11 @@ public class player_for_test : MonoBehaviour
       }
    }
     
-   void Respawn()//1点にしか戻れないから改良して
+   void Respawn()
    {
       if (respawnPoint != null)
       {
-         transform.position = respawnPoint.position;
+         transform.position = respawnPoint;
       }
    }
 
