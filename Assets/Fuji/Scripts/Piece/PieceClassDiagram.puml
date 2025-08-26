@@ -1,0 +1,45 @@
+@startuml
+namespace PieceSystem {
+    enum PieceDirection {
+        Up
+        Down
+        Left
+        Right
+        Null
+    }
+}
+
+class PieceFunction {
+    - PieceInfo pi
+    + IEnumerable<PieceDirection> ValidDirections()
+    + PieceInfo PieceInfo()
+}
+
+class PieceInfo {
+    - int pieceId
+    - bool canAttach
+    - List<PieceDirection> validDirections
+    + int PieceId
+    + bool CanAttach
+    + IEnumerable<PieceDirection> ValidDirections()
+}
+
+struct PieceData {
+    + int id
+    + bool canAttach
+}
+
+struct PieceSprite {
+    + int id
+    + Sprite sprite
+}
+
+class PieceDirFromKey {
+    + PieceDirection ToDir(KeyCode key)
+}
+
+PieceFunction --> PieceInfo
+PieceInfo --> "0..*" PieceSystem.PieceDirection
+PieceDirFromKey ..> PieceSystem.PieceDirection
+PieceSprite --> Sprite
+@enduml

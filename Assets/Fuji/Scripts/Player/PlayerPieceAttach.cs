@@ -4,7 +4,15 @@ using PieceSystem;
 
 public class PlayerPieceAttach : MonoBehaviour
 {
+    [SerializeField] private SpriteDatabase spriteDatabase;
     private KeyCode attachKey;
+    private Dictionary<PieceDirection, List<SpriteRenderer>> pieceDisplays = new() //追加装着可能か
+    {
+        { PieceDirection.Up, new() },
+        { PieceDirection.Down, new() },
+        { PieceDirection.Left, new() },
+        { PieceDirection.Right, new() },
+    };
     private Dictionary<PieceDirection, bool> attachable = new() //追加装着可能か
     {
         { PieceDirection.Up, true },
@@ -48,42 +56,36 @@ public class PlayerPieceAttach : MonoBehaviour
 
     public void AddPiece(PieceDirection direction, PieceInfo piece) //ピース装着
     {
+        if (!attachedPieces.TryGetValue(direction, out var targetList) || targetList.Count >= 4) return;
         var data = new PieceData(piece.PieceId, piece.CanAttach);
-        attachedPieces[direction].Add(data);
+        targetList.Add(data);
         attachable[direction] = piece.CanAttach;
+        UpdatePieceVisuals(direction);
     }
     private void DetachPiece(PieceDirection inputDir) //ピース外す
     {
-        if (attachedPieces.TryGetValue(inputDir, out var targetList) && targetList.Count > 0)
-        {
-            PieceData detachedPiece = targetList[targetList.Count - 1];
-            targetList.RemoveAt(targetList.Count - 1);
-            attachable[inputDir] = true;
-        }
+        if (!attachedPieces.TryGetValue(inputDir, out var targetList) || targetList.Count <= 0) return;
+        PieceData detachedPiece = targetList[targetList.Count - 1];
+        targetList.RemoveAt(targetList.Count - 1);
+        attachable[inputDir] = true;
+        UpdatePieceVisuals(inputDir);
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent<PieceFunction>(out var piece))
-        {
-            if (!nearbyPieces.Contains(piece))
-            {
-                nearbyPieces.Add(piece);
-            }
-        }
+        if (!other.TryGetComponent<PieceFunction>(out var piece)) return;
+        if (nearbyPieces.Contains(piece)) return;
+        nearbyPieces.Add(piece);
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.TryGetComponent<PieceFunction>(out var piece))
-        {
-            nearbyPieces.Remove(piece);
-        }
+        if (!other.TryGetComponent<PieceFunction>(out var piece)) return;
+        nearbyPieces.Remove(piece);
     }
 
-    
     int FindPieceStatus(List<PieceData> pieceList, int targetId)
     {
         if (pieceList.Count == 0)
-        {   
+        {
             return 0;
         }
         for (int i = 0; i < pieceList.Count; i++)
@@ -102,20 +104,29 @@ public class PlayerPieceAttach : MonoBehaviour
         }
         return 0;
     }
-    public void UpdatePieceVisibility(List<PieceData> pieceList, List<GameObject> objList)
+    
+    private void UpdatePieceVisuals(PieceDirection direction)
     {
-        // すべてのピースオブジェクトを非表示にする
-        foreach (GameObject obj in objList)
-        {
-            obj.SetActive(false);
-        }
+        var pieceList = attachedPieces[direction];
+        var displayList = pieceDisplays[direction];
 
-        // 最大3つまで表示する
-        int maxDisplay = Mathf.Min(3, pieceList.Count);
-
-        for (int i = 0; i < maxDisplay; i++)
+        for (int i = 0; i < displayList.Count; i++)
         {
-            objList[pieceList[i].id].SetActive(true);
+            if (i < pieceList.Count)
+            {
+                displayList[i].gameObject.SetActive(true);
+                int id = pieceList[i].id;
+                displayList[i].sprite = SpriteFromId(id);
+            }
+            else
+            {
+                displayList[i].gameObject.SetActive(false);
+            }
         }
+    }
+
+    private Sprite SpriteFromId(int id)
+    {
+        return spriteDatabase.SpriteFromId(id);
     }
 }

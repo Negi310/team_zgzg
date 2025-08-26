@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public struct PieceData //プレイヤーが格納する、ピースの持つ情報を表す構造体
 {
     public int id;
