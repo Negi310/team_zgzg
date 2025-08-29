@@ -8,6 +8,7 @@ public class player_for_test : MonoBehaviour
    public float speed;
    public GroundCheck ground;
    public GManager gManager;
+   public float jumpPower = 5f;
 
    private Rigidbody2D rb = null;
    private bool isGround = false;
@@ -45,6 +46,14 @@ public class player_for_test : MonoBehaviour
       rb.linearVelocity = new Vector2(xSpeed, rb.linearVelocity.y);
    }
 
+   void Update()
+   {
+      if (Input.GetKeyDown(KeyCode.Space) && ground.IsGround())
+      {
+         rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
+         rb.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+      }
+   }
 
    /*
    #region//接触判定

@@ -667,7 +667,7 @@ GameObject:
   - component: {fileID: 298544510}
   m_Layer: 0
   m_Name: "\u30EA\u30D5\u30C8"
-  m_TagString: Untagged
+  m_TagString: MoveFloor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2838,7 +2838,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 2
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -2864,7 +2864,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 4
   ground: {fileID: 1520754265}
-  gManager: {fileID: 0}
+  gManager: {fileID: 2098715155}
+  jumpPower: 10
 --- !u!1 &535621048
 GameObject:
   m_ObjectHideFlags: 0
