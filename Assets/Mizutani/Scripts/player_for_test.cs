@@ -9,10 +9,13 @@ public class player_for_test : MonoBehaviour
    public GroundCheck ground;
    public GManager gManager;
    public float jumpPower = 5f;
+   public float damageInterval = 1.0f; // 何秒ごとにダメージを与えるか
 
    private Rigidbody2D rb = null;
    private bool isGround = false;
    private Vector3 respawnPoint;
+   private bool isDamaging = false;
+   private Coroutine damageCoroutine;
 
    //private string thornTag = "Thorn";
 
@@ -78,6 +81,36 @@ public class player_for_test : MonoBehaviour
       if (collision.CompareTag("CheckPoint"))//"CheckPoint"タグのオブジェクトに触れたら
       {
          respawnPoint = collision.transform.position;
+      }
+
+      if (collision.CompareTag("Poison"))
+      {
+         if (!isDamaging)
+         {
+            isDamaging = true;
+            damageCoroutine = StartCoroutine(DamageOverTime(collision.gameObject));
+         }
+      }
+   }
+
+   void OnTriggerExit2D(Collider2D collision)
+   {
+      if (collision.CompareTag("Poison"))
+      {
+         if (isDamaging)
+         {
+            isDamaging = false;
+            StopCoroutine(damageCoroutine);
+         }
+      }
+   }
+   
+   private IEnumerator DamageOverTime(GameObject player)
+   {
+      while (isDamaging)
+      {
+         TakeDamage(1);
+         yield return new WaitForSeconds(damageInterval);
       }
    }
 

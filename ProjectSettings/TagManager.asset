@@ -9,6 +9,7 @@ TagManager:
   - Thorn
   - CheckPoint
   - MoveFloor
+  - Poison
   layers:
   - Default
   - TransparentFX
