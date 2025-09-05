@@ -72,18 +72,19 @@ public class player_for_test : MonoBehaviour
 
    private void OnTriggerEnter2D(Collider2D collision)
    {
+
       if (collision.CompareTag("Thorn"))//トゲとぶつかったら
-      {
-         TakeDamage(1);
-         Respawn();
-      }
+         {
+            TakeDamage(1);
+            Respawn();
+         }
 
       if (collision.CompareTag("CheckPoint"))//"CheckPoint"タグのオブジェクトに触れたら
       {
          respawnPoint = collision.transform.position;
       }
 
-      if (collision.CompareTag("Poison"))
+      if (collision.CompareTag("Poison"))//毒の持続ダメージ
       {
          if (!isDamaging)
          {
@@ -110,7 +111,7 @@ public class player_for_test : MonoBehaviour
       while (isDamaging)
       {
          TakeDamage(1);
-         yield return new WaitForSeconds(damageInterval);
+         yield return new WaitForSeconds(damageInterval);//damageInterval秒だけ待って再開
       }
    }
 
