@@ -16,6 +16,9 @@ public class player_for_test : MonoBehaviour
    private Vector3 respawnPoint;
    private bool isDamaging = false;
    private Coroutine damageCoroutine;
+   private bool isInPoison = false;
+   private float poisonTimer = 0f;
+   [SerializeField] private float poisonDamageInterval = 1.0f;
 
    //private string thornTag = "Thorn";
 
@@ -56,6 +59,16 @@ public class player_for_test : MonoBehaviour
          rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
          rb.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
       }
+
+      if (isInPoison)
+      {
+        poisonTimer += Time.deltaTime;
+        if (poisonTimer >= poisonDamageInterval)
+        {
+            TakeDamage(1);
+            poisonTimer = 0f;
+        }
+      }
    }
 
    /*
@@ -74,16 +87,25 @@ public class player_for_test : MonoBehaviour
    {
 
       if (collision.CompareTag("Thorn"))//トゲとぶつかったら
-         {
-            TakeDamage(1);
-            Respawn();
-         }
+      {
+         TakeDamage(1);
+         Respawn();
+      }
 
       if (collision.CompareTag("CheckPoint"))//"CheckPoint"タグのオブジェクトに触れたら
       {
          respawnPoint = collision.transform.position;
       }
 
+      if (collision.CompareTag("Poison"))
+      {
+        isInPoison = true;
+      }
+   }
+   
+   private void OnTriggerStay2D(Collider2D collision)
+   {
+      /*
       if (collision.CompareTag("Poison"))//毒の持続ダメージ
       {
          if (!isDamaging)
@@ -92,10 +114,12 @@ public class player_for_test : MonoBehaviour
             damageCoroutine = StartCoroutine(DamageOverTime(collision.gameObject));
          }
       }
+      */
    }
 
    void OnTriggerExit2D(Collider2D collision)
    {
+      /*
       if (collision.CompareTag("Poison"))
       {
          if (isDamaging)
@@ -104,8 +128,26 @@ public class player_for_test : MonoBehaviour
             StopCoroutine(damageCoroutine);
          }
       }
+      */
+
+      if (collision.CompareTag("Poison"))
+      {
+         if (!IsTouchingAnyPoison())
+            isInPoison = false;
+      }
    }
    
+   // 現在プレイヤーがまだ毒に触れているか確認する
+   private bool IsTouchingAnyPoison()
+   {
+      Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.2f);
+      foreach (var hit in hits)
+      {
+        if (hit.CompareTag("Poison"))
+            return true;
+      }
+      return false;
+   }
    private IEnumerator DamageOverTime(GameObject player)
    {
       while (isDamaging)
